@@ -5,14 +5,12 @@ const fs = require('fs').promises;
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
 const endTalker = '/talker';
-const endLogin = '/login';
+// const endLogin = '/login';
 
 const arrPromise = fs
   .readFile('talker.json', 'utf8')
   .then((data) => data)
   .catch((e) => console.log('Erro durante a leitura. \nErro:', e));
-
-// const content = fs.readFileSync('talker.json', 'utf8')
 
 const app = express();
 app.use(bodyParser.json());
