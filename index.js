@@ -10,7 +10,7 @@ const PORT = '3000';
 const endTalker = '/talker';
 // const endLogin = '/login';
 
-function read() {
+async function read() {
   return fs
     .readFile('talker.json', 'utf8')
     .then((data) => data)
@@ -28,6 +28,15 @@ app.get(endTalker, async (_req, res) => {
   return res
     .status(HTTP_OK_STATUS)
     .json((data.length) ? JSON.parse(data, null, 2) : []);
+});
+
+app.get(`${endTalker}/:id`, async (req, res) => {
+  const peoples = JSON.parse(await read());
+  const { id } = req.params;
+  const found = peoples.find((people) => people.id === +id);
+
+  if (!found) res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+  res.status(HTTP_OK_STATUS).json(found);
 });
 
 app.listen(PORT, console.log('Online'));
