@@ -39,12 +39,13 @@ app.get(`${ENDPOINT[0]}/:id`, async (req, res) => {
   res.status(HTTP_OK_STATUS).json(found);
 });
 
-
 app.post(ENDPOINT[1], (req, res) => { 
   const { email, password } = req.body;
   const token = crypto.randomBytes(8).toString('hex');
   
-  if (!(email && password)) return res.status(400).json({ "message": "'email' e 'password' são obrigatórios" });
+  if (!(email && password)) {
+    return res.status(400).json({ message: '"email" e "password" são obrigatórios' });
+  }
 
   res.status(200).json({ token });
 });
