@@ -2,6 +2,8 @@ const fs = require('fs').promises;
 const express = require('express');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
+const authEmail = require('./middlewares/auth/email');
+const authPassword = require('./middlewares/auth/password');
 
 const app = express();
 app.use(bodyParser.json());
@@ -39,14 +41,9 @@ app.get(`${ENDPOINT[0]}/:id`, async (req, res) => {
   res.status(HTTP_OK_STATUS).json(found);
 });
 
-app.post(ENDPOINT[1], (req, res) => { 
-  const { email, password } = req.body;
+app.post(ENDPOINT[1], authEmail, authPassword, (req, res) => { 
   const token = crypto.randomBytes(8).toString('hex');
   
-  if (!(email && password)) {
-    return res.status(400).json({ message: '"email" e "password" são obrigatórios' });
-  }
-
   res.status(200).json({ token });
 });
 
