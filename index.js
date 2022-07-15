@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const authEmail = require('./middlewares/auth/email');
 const authPassword = require('./middlewares/auth/password');
 const validToken = require('./middlewares/auth/validToken');
-const createSpeaker = require('./middlewares/auth/createSpeaker');
+const validSpeaker = require('./middlewares/auth/validSpeaker');
 
 const app = express();
 app.use(bodyParser.json());
@@ -21,14 +21,9 @@ async function read() {
     .catch((e) => console.error('Erro durante a leitura do arquivo.\nErro:', e));
   }
   
-async function write(acc) {
-  const arrData = JSON.parse(await read());
-  
-  acc.id = arrData.length + 1;
-  arrData.push(acc);
-
+async function write(content) {
   return fs
-    .writeFile('talker.json', JSON.stringify(arrData, null, 2), { flag: 'w' })
+    .writeFile('talker.json', JSON.stringify(content, null, 2), { flag: 'w' })
     .then(() => console.log('Os novos dados foram inseridos com sucesso!'))
     .catch((e) => console.error('Erro durante a escrita do arquivo.\nErro:', e));
 }
@@ -62,10 +57,29 @@ app.get(`${ENDPOINT[1]}/:id`, async (req, res) => {
 });
 
 app.use(validToken);
+app.use(validSpeaker);
 
-app.post(ENDPOINT[1], createSpeaker, async (req, res) => {
-  await write(req.body);
-  res.status(201).json(req.body);
+app.post(ENDPOINT[1], async (req, res) => {
+  const arrData = JSON.parse(await read());
+
+  req.body.id = arrData.length + 1;
+
+  arrData.push(req.body);  
+  write(arrData);
+
+  res.status(201).json(arrData[arrData.length - 1]);
+});
+
+app.put(`${ENDPOINT[1]}/:id`, async (req, res) => { 
+  const { id } = req.params;
+  const arrData = JSON.parse(await read());
+  const index = arrData.findIndex((data) => +data.id === +id);
+  
+  arrData[index] = {...arrData[index], ...req.body};
+  
+  write(arrData);
+  
+  res.status(200).json(arrData[index]);
 });
 
 app.listen(PORT, console.log('Online'));
