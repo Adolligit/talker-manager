@@ -36,7 +36,7 @@ app.get('/', (_request, response) => {
 app.post(ENDPOINT[0], authEmail, authPassword, (req, res) => { 
   const token = crypto.randomBytes(8).toString('hex');
 
-  res.status(200).json({ token });
+  res.status(HTTP_OK_STATUS).json({ token });
 });
 
 app.get(ENDPOINT[1], async (_req, res) => {
@@ -47,10 +47,23 @@ app.get(ENDPOINT[1], async (_req, res) => {
   .json((data.length) ? JSON.parse(data, null, 2) : []);
 });
 
+app.get(`${ENDPOINT[1]}/search`, validToken, async (req, res) => {
+  const arrData = JSON.parse(await read());
+  const { q } = req.query;
+
+  if (!q) return res.status(HTTP_OK_STATUS).json(arrData);
+
+  const search = arrData.filter(({ name }) => name.includes(q));
+
+  if (!search) return res.status(HTTP_OK_STATUS).json([]);
+
+  res.status(HTTP_OK_STATUS).json(search);
+});
+
 app.get(`${ENDPOINT[1]}/:id`, async (req, res) => {
-  const peoples = JSON.parse(await read());
+  const arrData = JSON.parse(await read());
   const { id } = req.params;
-  const found = peoples.find((people) => people.id === +id);
+  const found = arrData.find((data) => data.id === +id);
   
   if (!found) res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
   res.status(HTTP_OK_STATUS).json(found);
@@ -78,13 +91,13 @@ app.put(`${ENDPOINT[1]}/:id`, validSpeaker, async (req, res) => {
   
   write(arrData);
   
-  res.status(200).json(arrData[index]);
+  res.status(HTTP_OK_STATUS).json(arrData[index]);
 });
 
 app.delete(`${ENDPOINT[1]}/:id`, async (req, res) => {
   const { id } = req.params;
   let arrData = JSON.parse(await read());
-  
+
   arrData = arrData.filter((e) => +e.id !== +id);
   write(arrData);
 
