@@ -57,9 +57,8 @@ app.get(`${ENDPOINT[1]}/:id`, async (req, res) => {
 });
 
 app.use(validToken);
-app.use(validSpeaker);
 
-app.post(ENDPOINT[1], async (req, res) => {
+app.post(ENDPOINT[1], validSpeaker, async (req, res) => {
   const arrData = JSON.parse(await read());
 
   req.body.id = arrData.length + 1;
@@ -70,7 +69,7 @@ app.post(ENDPOINT[1], async (req, res) => {
   res.status(201).json(arrData[arrData.length - 1]);
 });
 
-app.put(`${ENDPOINT[1]}/:id`, async (req, res) => { 
+app.put(`${ENDPOINT[1]}/:id`, validSpeaker, async (req, res) => { 
   const { id } = req.params;
   const arrData = JSON.parse(await read());
   const index = arrData.findIndex((data) => +data.id === +id);
@@ -80,6 +79,16 @@ app.put(`${ENDPOINT[1]}/:id`, async (req, res) => {
   write(arrData);
   
   res.status(200).json(arrData[index]);
+});
+
+app.delete(`${ENDPOINT[1]}/:id`, async (req, res) => {
+  const { id } = req.params;
+  let arrData = JSON.parse(await read());
+  
+  arrData = arrData.filter((e) => +e.id !== +id);
+  write(arrData);
+
+  res.status(204).end();
 });
 
 app.listen(PORT, console.log('Online'));
