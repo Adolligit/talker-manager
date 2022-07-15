@@ -75,7 +75,7 @@ app.put(`${ENDPOINT[1]}/:id`, async (req, res) => {
   const arrData = JSON.parse(await read());
   const index = arrData.findIndex((data) => +data.id === +id);
   
-  arrData[index] = {...arrData[index], ...req.body};
+  arrData[index] = { ...arrData[index], ...req.body };
   
   write(arrData);
   
