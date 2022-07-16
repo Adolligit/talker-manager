@@ -10,14 +10,14 @@ module.exports = rescue((req, res, next) => {
     return next({
       status: HTTP_STATUS_UNAUTHORIZED, 
       message: 'Token não encontrado',
-    })
+    });
   }
   
   if (authorization.length !== 16) {
     return next({
       status: HTTP_STATUS_UNAUTHORIZED, 
       message: 'Token inválido',
-    })
+    });
   }
 
   next();
