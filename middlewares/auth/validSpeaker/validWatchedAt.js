@@ -1,4 +1,4 @@
-const DateValidation = require('../../../util/DateValidation');
+const DateValidation = require('../../../utils/DateValidation');
 
 module.exports = (req, res, next) => {
   const { talk: { watchedAt } } = req.body;

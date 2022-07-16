@@ -1,7 +1,7 @@
-const validName = require('./validName');
-const validAge = require('./validAge');
-const validTalk = require('./validTalk');
-const validWatchedAt = require('./validWatchedAt');
-const validRate = require('./validRate');
+const validName = require('./ValidName');
+const validAge = require('./ValidAge');
+const validTalk = require('./ValidTalk');
+const validWatchedAt = require('./ValidWatchedAt');
+const validRate = require('./ValidRate');
 
 module.exports = [validName, validAge, validTalk, validRate, validWatchedAt];
